@@ -188,6 +188,4 @@ class SingleHttpSimulation extends PeaSimulation {
       builder
     }
   }
-
-
 }

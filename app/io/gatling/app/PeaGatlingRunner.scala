@@ -125,14 +125,6 @@ class PeaGatlingRunner(config: mutable.Map[String, _], onlyReport: Boolean = fal
         terminateActorSystem()
         logger.error(LogUtils.stackTraceToString(t))
         PeaGatlingRunResult(null, null, null, t)
-    }finally {
-      val factory = LoggerFactory.getILoggerFactory
-      try {
-        factory.getClass.getMethod("stop").invoke(factory)
-      } catch {
-        case _: NoSuchMethodException => //Fail silently if a logging provider other than LogBack is used.
-        case NonFatal(ex)             => logger.warn("Logback failed to shutdown.", ex)
-      }
     }
   }
 
