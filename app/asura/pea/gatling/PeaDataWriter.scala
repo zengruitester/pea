@@ -127,6 +127,10 @@ object PeaDataWriter {
                           global: RequestCounters,
                           errors: mutable.Map[String, Int],
                         )
+  case class MoitorFuseData(
+                             errorrate: Int,
+                             maxResponse:Long=0L
+                           )
 
   case class PeaUserCounters(
                               total: Long,

@@ -3,8 +3,11 @@ package asura.pea.actor
 import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.event.{ActorClassifier, ActorEventBus, ManagedActorClassification}
 import asura.common.actor.BaseActor
+import asura.pea.actor.WorkerActor.StopEngine
 import asura.pea.actor.WorkerMonitorActor.{MonitorMessage, MonitorSubscriberMessage, WorkerMonitorBus}
-import asura.pea.gatling.PeaDataWriter.MonitorData
+import asura.pea.gatling.PeaDataWriter.{MoitorFuseData, MonitorData}
+import asura.pea.{PeaConfig, singleHttpScenario}
+import asura.pea.singleHttpScenario
 
 /**
   * monitor user and request counts
@@ -18,9 +21,20 @@ class WorkerMonitorActor extends BaseActor {
       monitorBus.subscribe(ref, self)
     case data: MonitorData =>
       monitorBus.publish(MonitorMessage(self, data))
+    case data: MoitorFuseData=>{
+      if(data.errorrate >= singleHttpScenario.errorrate){
+        stopFuseJob()
+      }
+    }
     case message: Any =>
       log.warning(s"Unknown message type ${message}")
   }
+
+  def stopFuseJob()= {
+    PeaConfig.workerActor ! StopEngine
+
+  }
+
 }
 
 object WorkerMonitorActor {
