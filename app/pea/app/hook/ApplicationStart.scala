@@ -58,6 +58,7 @@ class ApplicationStart @Inject()(
     }
   }
   PeaConfig.webSimulationEditorBaseUrl = getStringFromConfig("pea.simulations.webEditorBaseUrl")
+  PeaConfig.label = getStringFromConfig("pea.label")
   addSimulationOutputAndExtToClasspath()
   val enableZk = configuration.getOptional[Boolean]("pea.zk.enabled").getOrElse(false)
   if (enableZk) {
@@ -163,6 +164,7 @@ class ApplicationStart @Inject()(
     configuration.getOptional[String](key).getOrElse(StringUtils.EMPTY)
   }
 
+  // https://github.com/asura-pro/pea/issues/6
   private def addSimulationOutputAndExtToClasspath(): Unit = {
     if (StringUtils.isNotEmpty(PeaConfig.defaultSimulationOutputFolder)) {
       try {

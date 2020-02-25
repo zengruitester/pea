@@ -22,7 +22,7 @@ export class HomeService extends BaseService {
   constructor(private http: HttpClient) { super() }
 
   getRunningJobs() {
-    return this.http.get<ApiRes<string[]>>(`${this.API_BASE}/jobs`)
+    return this.http.get<ApiRes<ReporterJobStatus[]>>(`${this.API_BASE}/jobs`)
   }
 
   getJobDetails(runId: string) {
@@ -41,8 +41,8 @@ export class HomeService extends BaseService {
     return this.http.post<ApiRes<WorkersBoolResponse>>(`${this.API_BASE}/stop`, { workers: workers })
   }
 
-  compile(workers: PeaMember[]) {
-    return this.http.post<ApiRes<WorkersBoolResponse>>(`${this.API_BASE}/compile`, { workers: workers })
+  compile(workers: PeaMember[], pull: boolean) {
+    return this.http.post<ApiRes<WorkersBoolResponse>>(`${this.API_BASE}/compile`, { workers: workers, pull: pull })
   }
 
   getSimulations() {

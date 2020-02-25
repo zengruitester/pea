@@ -34,8 +34,11 @@
       {{'item.checkAll'|translate}}
     </label>
     <span class="tool">
+      <label nz-checkbox [(ngModel)]="compilePull">
+        {{'tips.runGitPull'|translate}}
+      </label>
       <button style="color:rebeccapurple;" nz-button nzSize="small" nzType="dashed" (click)="compile()">
-        {{'item.pullAndCompile'|translate}}
+        {{'item.compile'|translate}}
       </button>
     </span>
   </div>
@@ -49,7 +52,7 @@
               nzPopoverPlacement="topLeft" [nzPopoverContent]="contentTpl">
             </i>
             <ng-template #contentTpl>
-              <app-oshi-info [data]="item.status.oshi"></app-oshi-info>
+              <app-oshi-info [data]="item.status.oshi" [label]="item.status.label"></app-oshi-info>
             </ng-template>
             <i nz-icon nzType="number" nzTheme="outline"></i>
             <span>{{item.member.address}}:{{item.member.port}}</span>

@@ -42,6 +42,8 @@ export interface JobWorkerStatus {
   start?: number
   end?: number
   code?: number
+  label?: string
+  oshi?: Oshi
 }
 
 export interface ReporterJobStatus {
@@ -81,8 +83,12 @@ export interface DurationParam {
 export interface Injection {
   type?: string
   users?: number
+  from?: number
   to?: number
   duration?: DurationParam
+  times?: number
+  eachLevelLasting?: DurationParam
+  separatedByRampsLasting?: DurationParam
 }
 
 export interface LoadMessage {
@@ -98,6 +104,11 @@ export interface SingleJob {
   load?: UnionLoadMessage
 }
 
+export interface FinishedCallbackRequest {
+  url?: string
+  ext?: object
+}
+
 export interface LoadJob {
   workers?: PeaMember[]
   load?: UnionLoadMessage
@@ -106,6 +117,8 @@ export interface LoadJob {
   simulationId?: string
   start?: number
   type?: string
+  callback?: FinishedCallbackRequest
+  ext?: object
 }
 
 export interface SingleHttpScenarioMessage extends LoadMessage {
@@ -205,12 +218,20 @@ export const TimeUnit = {
   TIME_UNIT_HOUR: 'hour',
 }
 
-export const InjectionType = {
-  TYPE_RAMP_USERS: 'rampUsers',
-  TYPE_HEAVISIDE_USERS: 'heavisideUsers',
+export const OpenInjectionType = {
+  TYPE_NOTHING_FOR: 'nothingFor',
   TYPE_AT_ONCE_USERS: 'atOnceUsers',
+  TYPE_RAMP_USERS: 'rampUsers',
   TYPE_CONSTANT_USERS_PER_SEC: 'constantUsersPerSec',
   TYPE_RAMP_USERS_PER_SEC: 'rampUsersPerSec',
+  TYPE_HEAVISIDE_USERS: 'heavisideUsers',
+  TYPE_INCREMENT_USERS_PER_SEC: 'incrementUsersPerSec',
+}
+
+export const ClosedInjectionType = {
+  TYPE_CONSTANT_CONCURRENT_USERS: 'constantConcurrentUsers',
+  TYPE_RAMP_CONCURRENT_USERS: 'rampConcurrentUsers',
+  TYPE_INCREMENT_CONCURRENT_USERS: 'incrementConcurrentUsers',
 }
 
 export const HttpMethods = {
@@ -243,4 +264,18 @@ export const ThrottleTypes = {
   REACH: 'reach',
   HOLD: 'hold',
   JUMP: 'jump',
+}
+
+export const StatusColors = {
+  idle: 'darkslategray',
+  running: 'darkcyan',
+  reporting: 'darkgoldenrod',
+  finished: 'darkmagenta',
+  ill: 'darkred',
+  gathering: 'darkorchid'
+}
+
+export const WorkloadModels = {
+  OPEN: 'open',
+  CLOSED: 'closed'
 }
