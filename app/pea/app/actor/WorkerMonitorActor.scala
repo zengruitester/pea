@@ -2,18 +2,9 @@ package pea.app.actor
 
 import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.event.{ActorClassifier, ActorEventBus, ManagedActorClassification}
-<<<<<<< HEAD:app/asura/pea/actor/WorkerMonitorActor.scala
-import asura.common.actor.BaseActor
-import asura.pea.actor.WorkerActor.StopEngine
-import asura.pea.actor.WorkerMonitorActor.{MonitorMessage, MonitorSubscriberMessage, WorkerMonitorBus}
-import asura.pea.gatling.PeaDataWriter.{MoitorFuseData, MonitorData}
-import asura.pea.{PeaConfig, singleHttpScenario}
-import asura.pea.singleHttpScenario
-=======
 import pea.app.actor.WorkerMonitorActor.{MonitorMessage, MonitorSubscriberMessage, WorkerMonitorBus}
 import pea.app.gatling.PeaDataWriter.MonitorData
 import pea.common.actor.BaseActor
->>>>>>> f750b2ce3975d6a5d79c3f4726ca6d5c75135884:app/pea/app/actor/WorkerMonitorActor.scala
 
 /**
   * monitor user and request counts

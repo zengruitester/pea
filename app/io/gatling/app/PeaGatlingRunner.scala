@@ -20,9 +20,7 @@ import io.gatling.core.protocol.Protocols
 import io.gatling.core.scenario.{Scenario, SimulationParams}
 import io.gatling.core.stats.writer.RunMessage
 import io.gatling.http.protocol.HttpProtocol
-<<<<<<< HEAD
-import org.slf4j.LoggerFactory
-=======
+
 import pea.app.PeaConfig
 import pea.app.actor.GatlingRunnerActor.{GatlingReportResult, GatlingResult, PeaGatlingRunResult}
 import pea.app.gatling.{PeaDataWritersStatsEngine, PeaSimulation}
@@ -30,7 +28,6 @@ import pea.app.model.SimulationModel
 import pea.common.util.{LogUtils, StringUtils}
 import pea.dubbo.protocol.DubboProtocol
 import pea.grpc.protocol.GrpcProtocol
->>>>>>> f750b2ce3975d6a5d79c3f4726ca6d5c75135884
 import sbt.io.FileFilter
 
 import scala.collection.mutable

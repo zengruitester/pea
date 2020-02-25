@@ -129,11 +129,6 @@ class SingleHttpSimulation extends PeaSimulation {
         injection.`type` match {
           case Injection.TYPE_NOTHING_FOR => nothingFor(toFiniteDuration(duration))
           case Injection.TYPE_AT_ONCE_USERS => atOnceUsers(injection.users)
-<<<<<<< HEAD
-          case Injection.TYPE_CONSTANT_USERS_PER_SEC => constantUsersPerSec(injection.users) during (toFiniteDuration(duration))
-          case Injection.TYPE_RAMP_USERS_PER_SEC => rampUsersPerSec(injection.users) to injection.to during (toFiniteDuration(duration))
-          case Injection.TYPE_INCREMENT_USERS_PERSEC => incrementUsersPerSec(injection.users).times(injection.time).eachLevelLasting(toFiniteDuration(duration)).startingFrom(duration.start)
-=======
           case Injection.TYPE_RAMP_USERS => rampUsers(injection.users) during toFiniteDuration(duration)
           case Injection.TYPE_CONSTANT_USERS_PER_SEC => constantUsersPerSec(injection.users) during toFiniteDuration(duration)
           case Injection.TYPE_RAMP_USERS_PER_SEC => rampUsersPerSec(injection.from) to injection.to during toFiniteDuration(duration)
@@ -151,7 +146,6 @@ class SingleHttpSimulation extends PeaSimulation {
                 .eachLevelLasting(toFiniteDuration(injection.eachLevelLasting))
                 .startingFrom(injection.from)
             }
->>>>>>> 6669f6af77d9bd4dee249ffa19cc2e781291e79b
         }
       })
     } else {

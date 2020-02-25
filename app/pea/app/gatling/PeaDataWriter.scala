@@ -47,13 +47,8 @@ class PeaDataWriter(clock: Clock, configuration: GatlingConfiguration) extends D
   }
 
   override def onMessage(message: LoadEventMessage, data: ConsoleData): Unit = message match {
-<<<<<<< HEAD:app/asura/pea/gatling/PeaDataWriter.scala
-    case user: UserStartMessage    => onUserStartMessage(user, data)
-    case user: UserEndMessage      => onUserEndMessage(user, data)
-=======
     case user: UserStartMessage => onUserStartMessage(user, data)
     case user: UserEndMessage => onUserEndMessage(user, data)
->>>>>>> f750b2ce3975d6a5d79c3f4726ca6d5c75135884:app/pea/app/gatling/PeaDataWriter.scala
     case response: ResponseMessage => onResponseMessage(response, data)
     case error: ErrorMessage       => onErrorMessage(error, data)
     case _                         =>
@@ -70,11 +65,7 @@ class PeaDataWriter(clock: Clock, configuration: GatlingConfiguration) extends D
     }
   }
 
-<<<<<<< HEAD:app/asura/pea/gatling/PeaDataWriter.scala
-  private def onUserEndMessage(user: UserEndMessage, data: ConsoleData): Unit = {
-=======
   private def onUserStartMessage(user: UserStartMessage, data: ConsoleData): Unit = {
->>>>>>> f750b2ce3975d6a5d79c3f4726ca6d5c75135884:app/pea/app/gatling/PeaDataWriter.scala
     import data._
     import user._
     usersCounters.get(session.scenario) match {
@@ -83,18 +74,12 @@ class PeaDataWriter(clock: Clock, configuration: GatlingConfiguration) extends D
     }
   }
 
-<<<<<<< HEAD:app/asura/pea/gatling/PeaDataWriter.scala
-    usersCounters.get(session.scenario) match {
-      case Some(userCounters) => userCounters.userDone()
-      case _                  => logger.error(s"Internal error, scenario '${session.scenario}' has not been correctly initialized")
-=======
   private def onUserEndMessage(user: UserEndMessage, data: ConsoleData): Unit = {
     import data._
     import user._
     usersCounters.get(session.scenario) match {
       case Some(userCounters) => userCounters.userDone()
       case _ => logger.error(s"Internal error, scenario '${session.scenario}' has not been correctly initialized")
->>>>>>> f750b2ce3975d6a5d79c3f4726ca6d5c75135884:app/pea/app/gatling/PeaDataWriter.scala
     }
   }
 
