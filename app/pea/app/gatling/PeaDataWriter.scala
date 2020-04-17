@@ -50,19 +50,8 @@ class PeaDataWriter(clock: Clock, configuration: GatlingConfiguration) extends D
     case user: UserStartMessage => onUserStartMessage(user, data)
     case user: UserEndMessage => onUserEndMessage(user, data)
     case response: ResponseMessage => onResponseMessage(response, data)
-    case error: ErrorMessage       => onErrorMessage(error, data)
-    case _                         =>
-
-  }
-
-  private def onUserStartMessage(user: UserStartMessage, data: ConsoleData): Unit = {
-    import data._
-    import user._
-
-    usersCounters.get(session.scenario) match {
-      case Some(userCounters) => userCounters.userStart()
-      case _                  => logger.error(s"Internal error, scenario '${session.scenario}' has not been correctly initialized")
-    }
+    case error: ErrorMessage => onErrorMessage(error, data)
+    case _ =>
   }
 
   private def onUserStartMessage(user: UserStartMessage, data: ConsoleData): Unit = {

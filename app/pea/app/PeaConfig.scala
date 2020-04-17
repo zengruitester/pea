@@ -48,6 +48,9 @@ object PeaConfig {
   var zkCurrWorkerPath: String = null
   var zkCurrReporterPath: String = null
 
+  // gatling feed path
+  var basefilepath: String = null
+
   // gatling report
   var reportLogoHref: String = null
   var reportDescHref: String = null

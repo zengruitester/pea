@@ -2,8 +2,10 @@ package pea.app.actor
 
 import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.event.{ActorClassifier, ActorEventBus, ManagedActorClassification}
+import pea.app.{PeaConfig, singleHttpScenario}
+import pea.app.actor.WorkerActor.StopEngine
 import pea.app.actor.WorkerMonitorActor.{MonitorMessage, MonitorSubscriberMessage, WorkerMonitorBus}
-import pea.app.gatling.PeaDataWriter.MonitorData
+import pea.app.gatling.PeaDataWriter.{MoitorFuseData, MonitorData}
 import pea.common.actor.BaseActor
 
 /**

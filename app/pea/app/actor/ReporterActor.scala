@@ -10,6 +10,7 @@ import pea.app.PeaConfig
 import pea.app.actor.ReporterActor._
 import pea.app.model._
 import pea.app.model.job._
+import pea.app.model.multiscene.MultisScenariosMessage
 import pea.app.service.PeaService
 import pea.app.service.PeaService.WorkersAvailable
 import pea.common.actor.BaseActor
@@ -27,6 +28,8 @@ class ReporterActor extends BaseActor {
 
   override def receive: Receive = {
     case msg: SingleHttpScenarioJob =>
+      checkAndStartWorkers(msg) pipeTo sender()
+    case msg: RunHttpScenariosJob =>
       checkAndStartWorkers(msg) pipeTo sender()
     case msg: RunScriptJob =>
       checkAndStartWorkers(msg) pipeTo sender()
@@ -95,6 +98,14 @@ object ReporterActor {
                                     override val jobs: Seq[SingleHttpScenarioSingleJob],
                                   ) extends LoadJob {
     val `type`: String = LoadTypes.SINGLE
+  }
+
+  case class RunHttpScenariosJob(
+                                  override val workers: Seq[PeaMember],
+                                  override val load: MultisScenariosMessage,
+                                  override val jobs: Seq[RunHttpScenariosSingleJobs],
+                                  ) extends LoadJob {
+    val `type`: String = LoadTypes.GATLINGJOBS
   }
 
   case class RunScriptJob(

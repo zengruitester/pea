@@ -8,7 +8,8 @@ import pea.app.PeaConfig
 import pea.app.actor.GatlingRunnerActor.{GenerateReport, StartMessage}
 import pea.app.gatling.PeaRequestStatistics
 import pea.app.model.job.{RunScriptMessage, SingleHttpScenarioMessage}
-import pea.app.simulation.SingleHttpSimulation
+import pea.app.model.multiscene.MultisScenariosMessage
+import pea.app.simulation.{MultisceneHttpSimulation, SingleHttpSimulation}
 import pea.common.actor.BaseActor
 
 import scala.collection.mutable
@@ -19,11 +20,17 @@ class GatlingRunnerActor extends BaseActor {
   implicit val ec = context.dispatcher
   val innerClassPath = getClass.getResource("/").getPath
   val singleHttpSimulationRef = classOf[SingleHttpSimulation].getCanonicalName
-
+  val multisceneHttpSimulation = classOf[MultisceneHttpSimulation].getCanonicalName
   override def receive: Receive = {
     case msg: StartMessage =>
       sender() ! GatlingRunnerActor.start(msg)
     case msg: SingleHttpScenarioMessage =>
+      sender() ! GatlingRunnerActor.start(
+        StartMessage(innerClassPath, singleHttpSimulationRef, msg.report),
+        msg.simulationId,
+        msg.start
+      )
+    case msg:MultisScenariosMessage =>
       sender() ! GatlingRunnerActor.start(
         StartMessage(innerClassPath, singleHttpSimulationRef, msg.report),
         msg.simulationId,

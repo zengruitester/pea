@@ -19,7 +19,8 @@ import pea.app.actor.WebWorkerMonitorActor.WebWorkerMonitorOptions
 import pea.app.actor.WorkerActor.{GetNodeStatusMessage, StopEngine}
 import pea.app.actor.{WebCompilerMonitorActor, WebResponseMonitorActor, WebWorkerMonitorActor}
 import pea.app.api.BaseApi.OkApiRes
-import pea.app.model.job.{RunProgramMessage, RunScriptMessage, SingleHttpScenarioMessage}
+import pea.app.model.job._
+import pea.app.model.multiscene.MultisScenariosMessage
 import pea.app.util.SimulationLogUtils
 import pea.common.actor.{ActorEvent, SenderMessage}
 import pea.common.model.ApiResError
@@ -52,6 +53,17 @@ class GatlingApi @Inject()(
   def single() = Action(parse.byteString).async { implicit req =>
     checkWorkerEnable {
       val message = req.bodyAs(classOf[SingleHttpScenarioMessage])
+      val exception = message.isValid()
+      if (null != exception) {
+        Future.failed(exception)
+      } else {
+        (PeaConfig.workerActor ? message).toOkResult
+      }
+    }
+  }
+  def batch() = Action(parse.byteString).async { implicit req =>
+    checkWorkerEnable {
+      val message = req.bodyAs(classOf[MultisScenariosMessage])
       val exception = message.isValid()
       if (null != exception) {
         Future.failed(exception)

@@ -14,6 +14,7 @@ import pea.app.actor.ProgramRunnerActor.ProgramResult
 import pea.app.actor.WorkerActor._
 import pea.app.model._
 import pea.app.model.job.{RunProgramMessage, RunScriptMessage, SingleHttpScenarioMessage}
+import pea.app.model.multiscene.MultisScenariosMessage
 import pea.app.{ErrorMessages, PeaConfig}
 import pea.common.actor.BaseActor
 import pea.common.util.{JsonUtils, StringUtils}
@@ -46,6 +47,8 @@ class WorkerActor extends BaseActor {
       (compilerActor ? msg) pipeTo sender()
     case msg: SingleHttpScenarioMessage =>
       doSingleHttpScenario(msg) pipeTo sender()
+    case msg: MultisScenariosMessage =>
+      doMultisceneHttpScenario(msg) pipeTo sender()
     case msg: RunScriptMessage =>
       runScript(msg) pipeTo sender()
     case msg: RunProgramMessage =>
@@ -119,6 +122,14 @@ class WorkerActor extends BaseActor {
   def doSingleHttpScenario(message: SingleHttpScenarioMessage): Future[String] = {
     if (MemberStatus.WORKER_IDLE.equals(memberStatus.status)) {
       pea.app.singleHttpScenario = message
+      runLoad(message)
+    } else {
+      ErrorMessages.error_BusyStatus.toFutureFail
+    }
+  }
+  def doMultisceneHttpScenario(message: MultisScenariosMessage): Future[String] = {
+    if (MemberStatus.WORKER_IDLE.equals(memberStatus.status)) {
+      pea.app.multisScenariosMessage = message
       runLoad(message)
     } else {
       ErrorMessages.error_BusyStatus.toFutureFail

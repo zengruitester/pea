@@ -14,7 +14,7 @@ import org.pac4j.play.scala.SecurityComponents
 import pea.app.PeaConfig
 import pea.app.PeaConfig.DEFAULT_ACTOR_ASK_TIMEOUT
 import pea.app.actor.CompilerActor.{AsyncCompileMessage, GetAllSimulations}
-import pea.app.actor.ReporterActor.{GetAllWorkers, RunProgramJob, RunScriptJob, SingleHttpScenarioJob}
+import pea.app.actor.ReporterActor._
 import pea.app.api.BaseApi.OkApiRes
 import pea.app.api.util.ResultUtils
 import pea.app.model._
@@ -128,6 +128,12 @@ class HomeApi @Inject()(
       loadJob(message)
     }
   }
+  def runGatlingJobs() = Action(parse.byteString).async { implicit req =>
+    checkReporterEnable {
+      val message = req.bodyAs(classOf[RunHttpScenariosJob])
+      loadJob(message)
+    }
+  }
 
   def runScript() = Action(parse.byteString).async { implicit req =>
     checkReporterEnable {
@@ -182,7 +188,7 @@ class HomeApi @Inject()(
       if (null == workers || workers.isEmpty) {
         FutureErrorResult("Empty workers")
       } else {
-        if (null != load) {
+        if (null != load ) {
           val exception = load.isValid()
           if (null != exception) {
             Future.failed(exception)
