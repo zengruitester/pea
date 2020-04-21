@@ -64,6 +64,7 @@ class GatlingApi @Inject()(
   def batch() = Action(parse.byteString).async { implicit req =>
     checkWorkerEnable {
       val message = req.bodyAs(classOf[MultisScenariosMessage])
+      println("GatlingApi to message:%s".format(message))
       val exception = message.isValid()
       if (null != exception) {
         Future.failed(exception)

@@ -131,6 +131,7 @@ class HomeApi @Inject()(
   def runGatlingJobs() = Action(parse.byteString).async { implicit req =>
     checkReporterEnable {
       val message = req.bodyAs(classOf[RunHttpScenariosJob])
+      println("HomeApi to message : %s".format(message))
       loadJob(message)
     }
   }

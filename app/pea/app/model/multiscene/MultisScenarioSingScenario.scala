@@ -5,7 +5,7 @@ import pea.app.model.params.HttpAssertionParam
 case class MultisScenarioSingScenario(
                           var request: MultisScenarioSingleRequest= null,
                           var conditional: MultisScenarioSingleConditional= null,
-                          var switch: MultisScenarioSingleSwitch= null,
+                          var switchType: MultisScenarioSingleSwitch= null,
                           var randome: MultisScenarioSingleRandom= null,
                           var pause: MultisScenarioPauseParams= null,
                           var `type`:String,

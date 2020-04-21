@@ -5,6 +5,7 @@ import io.gatling.core.Predef._
 import io.gatling.core.action.builder._
 import io.gatling.core.controller.inject.closed.ClosedInjectionStep
 import io.gatling.core.controller.inject.open.OpenInjectionStep
+import io.gatling.core.controller.throttle.ThrottleStep
 import io.gatling.http.Predef._
 import io.gatling.http.check.HttpCheck
 import io.gatling.http.request.builder.HttpRequestBuilder
@@ -14,9 +15,9 @@ import pea.app.gatling.PeaSimulation
 import pea.app.model.multiscene.{MultisScenarioSingScenario, _}
 import io.gatling.core.session.{Expression, Session}
 import pea.app.actor.ResponseMonitorActor
-import pea.app.model.params.{AssertionItem, DurationParam, HttpAssertionParam}
+import pea.app.model.params.{AssertionItem, DurationParam, HttpAssertionParam,ThrottleStep => ThrottleStepParam}
 import pea.app.model.Injection
-import pea.app.{PeaConfig, multisScenariosMessage}
+import pea.app.{PeaConfig, multisScenariosMessage, singleHttpScenario}
 import pea.common.util.StringUtils
 
 import scala.collection.mutable.ArrayBuffer
@@ -37,10 +38,35 @@ class MultisceneHttpSimulation extends PeaSimulation {
       case MultisScenarios.TYPE_SINGLE_REQUEST => null
     }
   })
+  println("MultisceneHttpSimulation class to scans : %s".format(scns))
+
+  if (hasMaxDuration()) {
+    println(setUp(scns).throttle(getThrottleSteps()).maxDuration(toFiniteDuration(multisScenariosMessage.maxDuration)))
+  } else {
+    println(setUp(scns).throttle(getThrottleSteps()))
+  }
+
 //  println(scns)
 //  setUp(scns)
 //  setUp(scenario("").exec().inject(atOnceUsers(1)))
-
+    def hasMaxDuration(): Boolean = {
+      val maxDuration = multisScenariosMessage.maxDuration
+      null != maxDuration && StringUtils.isNotEmpty(maxDuration.unit) && maxDuration.value > 0
+    }
+    def getThrottleSteps(): Seq[ThrottleStep] = {
+      val throttle = multisScenariosMessage.throttle
+      if (null != throttle && null != throttle.steps && throttle.steps.nonEmpty) {
+        throttle.steps.map(step => {
+          step.`type` match {
+            case ThrottleStepParam.TYPE_REACH => reachRps(step.rps) in toFiniteDuration(step.duration)
+            case ThrottleStepParam.TYPE_HOLD => holdFor(toFiniteDuration(step.duration))
+            case ThrottleStepParam.TYPE_JUMP => jumpToRps(step.rps)
+          }
+        })
+      } else {
+        Nil
+      }
+    }
   def getScenarioBuilder(multisScenario:MultisScenarios): PopulationBuilder ={
     val scnName =  if (StringUtils.isNotEmpty(multisScenario.`name`)) {
       multisScenario.`name`
@@ -55,8 +81,8 @@ class MultisceneHttpSimulation extends PeaSimulation {
     } else {
       scenario(scnName).exec(chains)
     }
-    val populationBuilders = if (isOpenInjectionModel(multisScenario)) {
-      println(scn.inject(getOpenInjectionSteps(multisScenario)).protocols(http.disableCaching))
+    val populationBuilders:PopulationBuilder = if (isOpenInjectionModel(multisScenario)) {
+      scn.inject(getOpenInjectionSteps(multisScenario)).protocols(http.disableCaching)
     } else {
       scn.inject(getClosedInjectionSteps(multisScenario)).protocols(http.disableCaching)
     }
@@ -167,8 +193,8 @@ class MultisceneHttpSimulation extends PeaSimulation {
         case MultisScenarioSingScenario.TYPE_DO_IF_Equals => test = test :+ toDoIfEqualsBuilder(multisScenarioSingScenario.conditional)
         case MultisScenarioSingScenario.TYPE_DO_IF_OR_ELSE => test = test :+ toDoIfOrElseBuilder(multisScenarioSingScenario.conditional)
         case MultisScenarioSingScenario.TYPE_DO_IF_EQUALS_ORELSE => test = test :+ toDoIfEqualsOrElseBuilder(multisScenarioSingScenario.conditional)
-        case MultisScenarioSingScenario.TYPE_DO_SWITCH => test = test :+ toDoSwitchBuilder(multisScenarioSingScenario.switch)
-        case MultisScenarioSingScenario.TYPE_DO_SWITCH_OR_ELSE => test :+ toDoSwitchOrElseBuilder(multisScenarioSingScenario.switch)
+        case MultisScenarioSingScenario.TYPE_DO_SWITCH => test = test :+ toDoSwitchBuilder(multisScenarioSingScenario.switchType)
+        case MultisScenarioSingScenario.TYPE_DO_SWITCH_OR_ELSE => test :+ toDoSwitchOrElseBuilder(multisScenarioSingScenario.switchType)
         case MultisScenarioSingScenario.TYPE_RANDOM_SWITCH => test :+ toRandomSwitchBuilder(multisScenarioSingScenario.randome)
         case MultisScenarioSingScenario.TYPE_RANDOM_SWITCH_OR_ELSE => test :+ toRandomSwitchOrElseBuilder(multisScenarioSingScenario.randome)
         case MultisScenarioSingScenario.TYPE_UNIFORM_RANDOM_SWITCH => test :+ toUniformRandomSwitchBuilder(multisScenarioSingScenario.randome)
@@ -336,8 +362,8 @@ def getChecks(assertions:HttpAssertionParam): Seq[HttpCheck] = {
       .httpRequest(request.method, request.url)
       .queryParamMap(request.getParams())
       .headers(request.getHeaders())
-          .body(StringBody(request.getBody()))
-          .check(getChecks(request.assertions): _*)
+      .body(StringBody(request.getBody()))
+      .check(getChecks(request.assertions): _*)
     if (multisScenariosMessage.verbose) {
       builder.check(
         bodyString.saveAs(KEY_BODY),

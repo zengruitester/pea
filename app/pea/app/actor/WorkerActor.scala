@@ -129,7 +129,10 @@ class WorkerActor extends BaseActor {
   }
   def doMultisceneHttpScenario(message: MultisScenariosMessage): Future[String] = {
     if (MemberStatus.WORKER_IDLE.equals(memberStatus.status)) {
+      println("======="*10)
+      println("workerActor to message: %s".format(message))
       pea.app.multisScenariosMessage = message
+      println("======="*10)
       runLoad(message)
     } else {
       ErrorMessages.error_BusyStatus.toFutureFail

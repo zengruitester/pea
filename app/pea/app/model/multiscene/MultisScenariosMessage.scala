@@ -22,7 +22,7 @@ case class MultisScenariosMessage(
   }
   def isValid(): Exception = {
     if (null == multisScenarios || multisScenarios.isEmpty) {
-      new RuntimeException("Empty httpScenarios")
+      new RuntimeException("Empty` httpScenarios")
     }
     else {
       null

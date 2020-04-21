@@ -1,9 +1,10 @@
 package pea.app.model.multiscene
 
-import scala.concurrent.duration.Duration
+import pea.app.model.params.DurationParam
+
 
 case class MultisScenarioPauseParams(
-           var duration: Duration
+           var duration: DurationParam
                                     ) {
 
 }

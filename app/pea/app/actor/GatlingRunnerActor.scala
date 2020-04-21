@@ -20,7 +20,7 @@ class GatlingRunnerActor extends BaseActor {
   implicit val ec = context.dispatcher
   val innerClassPath = getClass.getResource("/").getPath
   val singleHttpSimulationRef = classOf[SingleHttpSimulation].getCanonicalName
-  val multisceneHttpSimulation = classOf[MultisceneHttpSimulation].getCanonicalName
+  val multisceneHttpSimulationRef = classOf[MultisceneHttpSimulation].getCanonicalName
   override def receive: Receive = {
     case msg: StartMessage =>
       sender() ! GatlingRunnerActor.start(msg)
@@ -31,8 +31,11 @@ class GatlingRunnerActor extends BaseActor {
         msg.start
       )
     case msg:MultisScenariosMessage =>
+      println("======"*20)
+      println("GatlingRunner Actor MultisScenariosMessage class to message: %s".format(msg))
+      println("======"*20)
       sender() ! GatlingRunnerActor.start(
-        StartMessage(innerClassPath, singleHttpSimulationRef, msg.report),
+        StartMessage(innerClassPath, multisceneHttpSimulationRef, msg.report),
         msg.simulationId,
         msg.start
       )
@@ -75,6 +78,9 @@ object GatlingRunnerActor {
              simulationId: String = null,
              start: Long = 0L
            )(implicit ec: ExecutionContext): PeaGatlingRunResult = {
+    println("===="*20)
+    println("GatlingRunner start function to message:%s".format(message))
+    println("===="*20)
     PeaGatlingRunner.run(message.toGatlingPropertiesMap, simulationId, start)
   }
 
